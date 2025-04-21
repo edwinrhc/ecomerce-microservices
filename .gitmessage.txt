@@ -1,0 +1,22 @@
+# 🎯 Estructura del mensaje de commit (Conventional Commits)
+
+# tipo(ámbito): descripción breve
+#
+# Tipos más comunes:
+# - feat:     nueva funcionalidad
+# - fix:      corrección de errores
+# - docs:     cambios en la documentación
+# - style:    cambios de estilo (sin lógica, solo CSS/HTML)
+# - refactor: mejora interna del código (sin cambiar funcionalidad)
+# - chore:    tareas varias como configuración, dependencias, etc.
+# - test:     añadir o modificar pruebas
+
+# Ejemplos:
+# feat(blog): agrega nueva tarjeta automática con Astro.glob()
+# fix(security): corrige validación de token JWT
+# docs: mejora redacción del artículo sobre Docker
+# refactor(layout): separa componentes en secciones reutilizables
+
+# Línea 1: Máximo 72 caracteres (claro y directo)
+# Línea 2: (en blanco)
+# Línea 3+: Detalles adicionales del cambio (opcional)
