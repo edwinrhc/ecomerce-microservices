@@ -93,12 +93,26 @@ spring.cloud.config.server.git.clone-on-start=true
 - Si usas otra unidad (por ejemplo `D:`), actualiza la ruta así:
 
 ```properties
-spring.cloud.config.server.git.uri=file:///D:/TuRuta/config-repo
+spring.cloud.config.server.git.uri=file:./config-repo
 ```
 
-- Si cambias de PC, recuerda copiar la carpeta `config-repo` y volver a ejecutar:
+- Tener creado la carpeta `config-repo/product-service.properties`  desde la raíz de ecomerce-microservice 
+- Agregar al ``product-service.properties``
 
+````
+spring.application.name=config-server
+server.port=8888
+
+spring.cloud.config.server.git.uri=file:./config-repo
+
+
+spring.cloud.config.server.git.clone-on-start=true
+spring.cloud.config.server.git.default-label=master
+
+````
+Luego en la misma carpeta ``application-service.properties`` hacemos este comando:
 ```bash
+
 git init
 git add .
 git commit -m "Migrated config files"
