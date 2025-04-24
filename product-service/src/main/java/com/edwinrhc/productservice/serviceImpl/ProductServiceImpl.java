@@ -1,7 +1,8 @@
 package com.edwinrhc.productservice.serviceImpl;
 
 import com.edwinrhc.productservice.constants.ProductConstants;
-import com.edwinrhc.productservice.dto.ProductDTO;
+import com.edwinrhc.productservice.dto.product.CreateProductDTO;
+import com.edwinrhc.productservice.dto.product.UpdateProductDTO;
 import com.edwinrhc.productservice.entity.Product;
 import com.edwinrhc.productservice.exception.ResourceNotFoundException;
 import com.edwinrhc.productservice.repository.ProductRepository;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,13 +32,13 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ResponseEntity<String> createProduct(ProductDTO productDTO) {
+    public ResponseEntity<String> createProduct(CreateProductDTO createProductDTO) {
 
-        log.info("Iniciando creación de producto: {}", productDTO);
+        log.info("Iniciando creación de producto: {}", createProductDTO);
         try{
-            Product product = modelMapper.map(productDTO, Product.class);
+            Product product = modelMapper.map(createProductDTO, Product.class);
             Product savedProduct = productRepository.save(product);
-            ProductDTO result = modelMapper.map(savedProduct, ProductDTO.class);
+            CreateProductDTO result = modelMapper.map(savedProduct, CreateProductDTO.class);
             return ProductUtils.getResponseEntity("Successfully Registered",HttpStatus.OK);
         }catch(Exception e){
             log.error("Error al crear el producto", e);
@@ -47,12 +49,35 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAllProducts() {
+    public ResponseEntity<String> updateProduct(UpdateProductDTO updateProductDTO) {
+       log.info("Iniciado updateProducto: {}", updateProductDTO);
+       try{
+           Optional<Product> optionalProduct = productRepository.findById(updateProductDTO.getId());
+           if(optionalProduct.isEmpty()){
+               return ProductUtils.getResponseEntity("Producto no encontrado", HttpStatus.NOT_FOUND);
+           }
+
+           Product existingProduct = optionalProduct.get();
+
+           modelMapper.map(updateProductDTO, existingProduct);
+           productRepository.save(existingProduct);
+           log.info("Producto actualizado correctamente: {}",existingProduct.getId());
+           return ProductUtils.getResponseEntity("Producto actualizado correctamente", HttpStatus.OK);
+       }catch (Exception e){
+           log.error("Error al actualizar el producto", e);
+           e.printStackTrace();
+       }
+
+        return ProductUtils.getResponseEntity(ProductConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public List<CreateProductDTO> getAllProducts() {
         try{
             log.info("Iniciando todos los productos");
             return productRepository.findAll()
                     .stream()
-                    .map(product -> modelMapper.map(product,ProductDTO.class))
+                    .map(product -> modelMapper.map(product, CreateProductDTO.class))
                     .collect(Collectors.toList());
         }catch(Exception e){
             log.error("Error al listar el producto", e);
@@ -62,12 +87,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(Long id) {
+    public CreateProductDTO getProductById(Long id) {
         try{
             log.info("Iniciando busqueda por ID - productos");
             Product product = productRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
-            return modelMapper.map(product, ProductDTO.class);
+            return modelMapper.map(product, CreateProductDTO.class);
         }catch(Exception e){
             throw new RuntimeException("Error buscar el producto por ID: "+ e.getMessage(),e);
         }
