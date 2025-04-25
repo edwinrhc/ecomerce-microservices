@@ -29,4 +29,7 @@ public interface ProductRest {
     @DeleteMapping("/{id}")
     ResponseEntity<String> deleteProduct(@PathVariable Long id);
 
+    @GetMapping("/{id}")
+    ResponseEntity<CreateProductDTO> getProductById(@PathVariable Long id);
+
 }

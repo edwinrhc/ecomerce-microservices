@@ -9,6 +9,7 @@ import com.edwinrhc.productservice.repository.ProductRepository;
 import com.edwinrhc.productservice.service.ProductService;
 import com.edwinrhc.productservice.utils.ProductUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -100,14 +101,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public CreateProductDTO getProductById(Long id) {
-        try {
+    public ResponseEntity<CreateProductDTO> getProductById(Long id) {
             log.info("Iniciando busqueda por ID - productos");
+        try {
             Product product = productRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
-            return modelMapper.map(product, CreateProductDTO.class);
+            .orElseThrow(() -> new ResourceNotFoundException("Producto", "id", id));
+
+            CreateProductDTO dto = modelMapper.map(product, CreateProductDTO.class);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+
+        }catch (ResourceNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error buscar el producto por ID: " + e.getMessage(), e);
+            log.error("Error al buscar el producto por ID", e);
+            throw new RuntimeException("Error al buscar el producto por ID: " + e.getMessage(), e);
         }
     }
 
