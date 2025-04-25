@@ -52,9 +52,10 @@ public class ProductServiceImpl implements ProductService {
         log.info("Iniciado updateProducto: {}", updateProductDTO);
         try {
             Optional<Product> optionalProduct = productRepository.findById(updateProductDTO.getId());
-            if (optionalProduct.isEmpty()) {
-                return ProductUtils.getResponseEntity("Producto no encontrado", HttpStatus.NOT_FOUND);
-            }
+//            TODO: ERROR en isEmpty
+//            if (optionalProduct.isEmpty()) {
+//                return ProductUtils.getResponseEntity("Producto no encontrado", HttpStatus.NOT_FOUND);
+//            }
 
             Product existingProduct = optionalProduct.get();
 
