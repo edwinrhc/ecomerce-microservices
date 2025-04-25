@@ -11,9 +11,17 @@ public interface ProductService {
 
     ResponseEntity<String> createProduct(CreateProductDTO createProductDTO);
     ResponseEntity<String> updateProduct(UpdateProductDTO updateProductDTO);
+    ResponseEntity<String> deteleProduct(Long id);
+
+
+    CreateProductDTO getProductById(Long id);
 
     List<CreateProductDTO> getAllProducts();
-    CreateProductDTO getProductById(Long id);
+    List<CreateProductDTO> getProductsByName(String name);
+    List<CreateProductDTO> getProductsByCategory(String category);
+
+
+
 
 
 

@@ -29,18 +29,16 @@ public class ProductServiceImpl implements ProductService {
     ModelMapper modelMapper;
 
 
-
-
     @Override
     public ResponseEntity<String> createProduct(CreateProductDTO createProductDTO) {
 
         log.info("Iniciando creación de producto: {}", createProductDTO);
-        try{
+        try {
             Product product = modelMapper.map(createProductDTO, Product.class);
             Product savedProduct = productRepository.save(product);
             CreateProductDTO result = modelMapper.map(savedProduct, CreateProductDTO.class);
-            return ProductUtils.getResponseEntity("Successfully Registered",HttpStatus.OK);
-        }catch(Exception e){
+            return ProductUtils.getResponseEntity("Successfully Registered", HttpStatus.OK);
+        } catch (Exception e) {
             log.error("Error al crear el producto", e);
             e.printStackTrace();
 //          throw new RuntimeException("Error al crear el producto: "+ e.getMessage(),e);
@@ -50,51 +48,95 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ResponseEntity<String> updateProduct(UpdateProductDTO updateProductDTO) {
-       log.info("Iniciado updateProducto: {}", updateProductDTO);
-       try{
-           Optional<Product> optionalProduct = productRepository.findById(updateProductDTO.getId());
-           if(optionalProduct.isEmpty()){
-               return ProductUtils.getResponseEntity("Producto no encontrado", HttpStatus.NOT_FOUND);
-           }
+        log.info("Iniciado updateProducto: {}", updateProductDTO);
+        try {
+            Optional<Product> optionalProduct = productRepository.findById(updateProductDTO.getId());
+            if (optionalProduct.isEmpty()) {
+                return ProductUtils.getResponseEntity("Producto no encontrado", HttpStatus.NOT_FOUND);
+            }
 
-           Product existingProduct = optionalProduct.get();
+            Product existingProduct = optionalProduct.get();
 
-           modelMapper.map(updateProductDTO, existingProduct);
-           productRepository.save(existingProduct);
-           log.info("Producto actualizado correctamente: {}",existingProduct.getId());
-           return ProductUtils.getResponseEntity("Producto actualizado correctamente", HttpStatus.OK);
-       }catch (Exception e){
-           log.error("Error al actualizar el producto", e);
-           e.printStackTrace();
-       }
+            modelMapper.map(updateProductDTO, existingProduct);
+            productRepository.save(existingProduct);
+            log.info("Producto actualizado correctamente: {}", existingProduct.getId());
+            return ProductUtils.getResponseEntity("Producto actualizado correctamente", HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error al actualizar el producto", e);
+            e.printStackTrace();
+        }
 
         return ProductUtils.getResponseEntity(ProductConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
+    public ResponseEntity<String> deteleProduct(Long id) {
+        try {
+            Product product = productRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+            productRepository.delete(product);
+            return ProductUtils.getResponseEntity("Producto eliminado correctamente", HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            log.warn("Intento de eliminar un producto no encontrado: {}", e.getMessage());
+            return ProductUtils.getResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error al eliminar el producto", e);
+            return ProductUtils.getResponseEntity(ProductConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
     public List<CreateProductDTO> getAllProducts() {
-        try{
+        try {
             log.info("Iniciando todos los productos");
             return productRepository.findAll()
                     .stream()
                     .map(product -> modelMapper.map(product, CreateProductDTO.class))
                     .collect(Collectors.toList());
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error("Error al listar el producto", e);
-            throw new RuntimeException("Error al listar el producto: "+ e.getMessage(),e);
+            throw new RuntimeException("Error al listar el producto: " + e.getMessage(), e);
         }
-
     }
 
     @Override
     public CreateProductDTO getProductById(Long id) {
-        try{
+        try {
             log.info("Iniciando busqueda por ID - productos");
             Product product = productRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
             return modelMapper.map(product, CreateProductDTO.class);
-        }catch(Exception e){
-            throw new RuntimeException("Error buscar el producto por ID: "+ e.getMessage(),e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error buscar el producto por ID: " + e.getMessage(), e);
         }
+    }
+
+
+    @Override
+    public List<CreateProductDTO> getProductsByName(String name) {
+
+            List<Product> products = productRepository.findByNameContainingIgnoreCase(name);
+            if(products.isEmpty()) {
+                throw new ResourceNotFoundException("Producto", "nombre", name);
+            }
+            return products
+                    .stream()
+                    .map(product -> modelMapper.map(product, CreateProductDTO.class))
+                    .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<CreateProductDTO> getProductsByCategory(String category) {
+
+            List<Product> products = productRepository.findByCategoryIgnoreCase(category);
+            if (products.isEmpty()) {
+                throw new ResourceNotFoundException("Productos", "categorias", category);
+            }
+            return products
+                    .stream()
+                    .map(product -> modelMapper.map(product, CreateProductDTO.class))
+                    .collect(Collectors.toList());
+
     }
 }
