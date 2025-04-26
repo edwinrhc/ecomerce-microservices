@@ -8,7 +8,6 @@ import com.edwinrhc.orderservice.exception.ResourceNotFoundException;
 import com.edwinrhc.orderservice.repository.OrderRepository;
 import com.edwinrhc.orderservice.service.OrderService;
 import com.edwinrhc.orderservice.utils.OrderUtils;
-import com.edwinrhc.productservice.utils.ProductUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,9 +37,10 @@ public class OrderServiceImpl implements OrderService {
         log.info("Create Order: {}", createOrderDTO);
         try{
             Order order = modelMapper.map(createOrderDTO, Order.class);
+            order.setOrderDate(LocalDateTime.now());
             Order savedOrder = orderRepository.save(order);
             CreateOrderDTO savedOrderDTO = modelMapper.map(savedOrder, CreateOrderDTO.class);
-            return ProductUtils.getResponseEntity("Successfully Registered", HttpStatus.OK);
+            return OrderUtils.getResponseEntity("Successfully Registered", HttpStatus.OK);
 
         }catch (Exception e){
             log.error("Error al crear el order", e);
@@ -68,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
             e.printStackTrace();
         }
 
-        return ProductUtils.getResponseEntity(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return OrderUtils.getResponseEntity(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
