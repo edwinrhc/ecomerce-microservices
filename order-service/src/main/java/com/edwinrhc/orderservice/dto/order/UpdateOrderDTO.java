@@ -1,0 +1,32 @@
+package com.edwinrhc.orderservice.dto.order;
+
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+public class UpdateOrderDTO {
+
+
+    @NotNull(message = "El ID es obligatorio para la actualización")
+    private Long id;
+
+    @NotBlank(message = "El orderNumber no puede estar vacío")
+    private String orderNumber;
+
+    private LocalDateTime orderDate;
+
+    @NotNull(message = "El totalAmount es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor que cero")
+    private BigDecimal totalAmount;
+
+    @NotBlank(message = "El orderStatus no puede estar vacío")
+    private String orderStatus;
+
+
+}
