@@ -26,10 +26,11 @@ public interface ProductRest {
     @GetMapping(value="/category/{category}")
     ResponseEntity<List<CreateProductDTO>> getProductsByCategory(@PathVariable String category);
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<String> deleteProduct(@PathVariable Long id);
 
     @GetMapping("/{id}")
     ResponseEntity<CreateProductDTO> getProductById(@PathVariable Long id);
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<String> deleteProduct(@PathVariable Long id);
 
 }

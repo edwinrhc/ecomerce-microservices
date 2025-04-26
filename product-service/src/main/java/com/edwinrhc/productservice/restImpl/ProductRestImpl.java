@@ -64,6 +64,13 @@ public class ProductRestImpl implements ProductRest {
 
     }
 
+
+    @Override
+    public ResponseEntity<CreateProductDTO> getProductById(Long id) {
+        return productService.getProductById(id);
+
+    }
+
     @Override
     public ResponseEntity<String> deleteProduct(Long id) {
         try{
@@ -72,12 +79,5 @@ public class ProductRestImpl implements ProductRest {
             e.printStackTrace();
         }
         return ProductUtils.getResponseEntity(ProductConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-
-    @Override
-    public ResponseEntity<CreateProductDTO> getProductById(Long id) {
-        return productService.getProductById(id);
-
     }
 }
