@@ -4,6 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,11 +24,15 @@ public class UpdatePaymentDTO {
     private Long id;
 
     @Column(nullable = false)
+    @NotNull(message = "El monto es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El monto debe ser mayor que cero")
     private BigDecimal amount;
 
+    @NotBlank(message = "El paymentMethod no puede estar vacío")
     @Column(nullable = false, length = 50)
     private String paymentMethod; // tipo de pago
 
+    @NotBlank(message = "El paymentStatus no puede estar vacío")
     @Column(nullable = false, length = 20)
     private String paymentStatus;
 

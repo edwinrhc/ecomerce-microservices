@@ -21,7 +21,7 @@ public interface PaymentRest {
     ResponseEntity<List<CreatePaymentDTO>> getAllPayments();
 
     @GetMapping(value="/{id}")
-    ResponseEntity<List<CreatePaymentDTO>> getPaymentById(@PathVariable Long id);
+    ResponseEntity<CreatePaymentDTO> getPaymentById(@PathVariable Long id);
 
     @GetMapping(value="/status/{status}")
     ResponseEntity<List<CreatePaymentDTO>> getPaymentByStatus(@PathVariable String status);
