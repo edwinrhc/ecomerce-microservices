@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+
 @Slf4j
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -30,52 +31,48 @@ public class JwtFilter extends OncePerRequestFilter {
     Claims claims = null;
     private String userName = null;
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        if(request.getServletPath().matches("/user/login|/user/forgotPassword|/user/signup")){
-            filterChain.doFilter(request,response);
-        }else{
-            String authorizationHeader = request.getHeader("Authorization");
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+
+        if (httpServletRequest.getServletPath().matches("/api/user/login|/api/user/forgotPassword|/api/user/signup")) {
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+        } else {
+            String authorizationHeader = httpServletRequest.getHeader("Authorization");
             String token = null;
 
-            if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")){
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 token = authorizationHeader.substring(7);
                 userName = jwtUtil.extractUsername(token);
                 claims = jwtUtil.extractAllClaims(token);
 
-                log.info("Rol detectado en toke JWT: {}", claims.get("role"));
+                log.info("Rol detectado en token JWT: {}", claims.get("role"));
             }
-
-            if(userName != null && SecurityContextHolder.getContext().getAuthentication() == null){
+            if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = service.loadUserByUsername(userName);
-                if(jwtUtil.validateToken(token,userDetails)){
+                if (jwtUtil.validateToken(token, userDetails)) {
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     usernamePasswordAuthenticationToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
+                            new WebAuthenticationDetailsSource().buildDetails(httpServletRequest)
                     );
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
             }
 
-            filterChain.doFilter(request,response);
-
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
         }
-
     }
 
-
-    public boolean isAdmin() {
+    public boolean isAdmin(){
         return "admin".equalsIgnoreCase((String) claims.get("role"));
     }
-
-    public boolean isUser() {
+    public boolean isUser(){
         return "user".equalsIgnoreCase((String) claims.get("role"));
     }
 
     public String getCurrentUser(){
         return userName;
     }
-
 }

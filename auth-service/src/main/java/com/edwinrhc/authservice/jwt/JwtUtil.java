@@ -16,22 +16,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+
 @Service
 public class JwtUtil {
 
+    // Clave segura en Base64 (copiada desde consola)
     private static final String SECRET = "KBpfFa2CChIojkqzkB05VmkoSH3cEqXEipClogZ35k4=";
-
+    // Clave secreta decodificada
     private final SecretKey key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(SECRET));
 
-    public String extractUsername(String token) {
+    public String extractUsername(String token){
+
         return extractClamis(token, Claims::getSubject);
     }
 
-    public Date extractExpiration(String token) {
-        return extractClamis(token,Claims::getExpiration);
+    public Date extractExpiration(String token){
+        return extractClamis(token, Claims::getExpiration);
     }
 
-    public <T> T extractClamis(String token, Function<Claims, T> claimsResolver) {
+    public <T> T extractClamis(String token, Function<Claims,T> claimsResolver){
 
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -44,37 +47,36 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
-
-    private Boolean isTokenExpired(String token) {
+    private Boolean isTokenExpired(String token){
         return extractExpiration(token).before(new Date());
     }
 
     public String generateToken(String username, String role){
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
+        claims.put("role",role);
         return createToken(claims, username);
     }
 
-    private String createToken(Map<String,Object> claims, String subject){
+    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000* 60*60*10))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
                 .signWith(key)
                 .compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public Boolean validateToken(String token, UserDetails userDetails){
+        final String username= extractUsername(token);
+        return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
     }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-        String encodeKey = Encoders.BASE64.encode(key.getEncoded());
-        System.out.println("🔐 Llave secreta segura: " + encodeKey);
+        String encodedKey = Encoders.BASE64.encode(key.getEncoded());
+        System.out.println("🔐 Llave secreta segura: " + encodedKey);
     }
 
 
