@@ -19,7 +19,7 @@ public class AuthRestImpl implements AuthRest {
     @Override
     public ResponseEntity<String> createUser(CreateUserDTO dto) {
        try{
-           return authService.createUser(dto);
+           return authService.signUp(dto);
        }catch(Exception ex){
            ex.printStackTrace();
        }

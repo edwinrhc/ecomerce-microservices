@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -29,15 +31,22 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public ResponseEntity<String> createUser(CreateUserDTO createUserDTO) {
+    public ResponseEntity<String> signUp(CreateUserDTO createUserDTO) {
         log.info("createUser : {}", createUserDTO);
         try{
-            User user = modelMapper.map(createUserDTO, User.class);
+            User validEmail = userRepository.findByEmail(createUserDTO.getEmail());
+            if(Objects.isNull(validEmail)){
+                User user = modelMapper.map(createUserDTO, User.class);
+                user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+                User savedUser = userRepository.save(user);
+                CreateUserDTO result = modelMapper.map(savedUser, CreateUserDTO.class);
+                return AuthUtils.getResponseEntity(AuthConstants.SUCCESS, HttpStatus.OK);
+            }else{
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(AuthConstants.EMAIL_ALREADY_EXISTS);
 
-            user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
-            User savedUser = userRepository.save(user);
-            CreateUserDTO result = modelMapper.map(savedUser, CreateUserDTO.class);
-            return AuthUtils.getResponseEntity(AuthConstants.SUCCESS, HttpStatus.OK);
+            }
         } catch (Exception e){
            log.error("Error al crear el usuario",e);
            e.printStackTrace();
