@@ -4,7 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
@@ -14,9 +16,20 @@ public class UpdateUserDTO {
     private Long id;
 
     @Column(unique=true, nullable=false,length=100)
-    @NotBlank(message = "El username no puede estar vacío")
-    private String username;
+    @NotBlank(message = "El nombre no puede estar vacío")
+    private String name;
 
+    @NotBlank(message = "El numero  no puede estar vacío")
+    private String contactNumber;
+
+    @Email
+    @Column(unique=true, nullable=false,length=100)
+    @NotEmpty(message="El email no puede estar en blanco")
+    private String email;
+
+    @Column(nullable=false)
+    @NotBlank(message = "El password no puede estar vacío")
+    private String password;
 
     @Column(nullable=false)
     @NotBlank(message = "El role no puede estar vacío")
