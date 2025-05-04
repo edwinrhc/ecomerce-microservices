@@ -56,6 +56,8 @@ public class AuthServiceImpl implements AuthService {
             User validEmail = userRepository.findByEmail(createUserDTO.getEmail());
             if(Objects.isNull(validEmail)){
                 User user = modelMapper.map(createUserDTO, User.class);
+                user.setRole("user");
+                user.setStatus("false");
                 user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
                 User savedUser = userRepository.save(user);
                 CreateUserDTO result = modelMapper.map(savedUser, CreateUserDTO.class);
