@@ -4,8 +4,10 @@ import com.edwinrhc.authservice.constants.AuthConstants;
 import com.edwinrhc.authservice.dto.user.CreateUserDTO;
 import com.edwinrhc.authservice.dto.user.LoginDTO;
 import com.edwinrhc.authservice.dto.user.UpdateUserDTO;
+import com.edwinrhc.authservice.dto.user.UserListDTO;
 import com.edwinrhc.authservice.entity.User;
 import com.edwinrhc.authservice.jwt.CustomerUsersDetailsService;
+import com.edwinrhc.authservice.jwt.JwtFilter;
 import com.edwinrhc.authservice.jwt.JwtUtil;
 import com.edwinrhc.authservice.repository.PasswordResetTokenRepository;
 import com.edwinrhc.authservice.repository.UserRepository;
@@ -23,6 +25,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -48,6 +52,8 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Override
     public ResponseEntity<String> signUp(CreateUserDTO createUserDTO) {
@@ -96,6 +102,19 @@ public class AuthServiceImpl implements AuthService {
         return new ResponseEntity<String>(AuthConstants.BAD_CREDENTIALS, HttpStatus.BAD_REQUEST);
     }
 
+    @Override
+    public ResponseEntity<List<UserListDTO>> listUsers() {
+        try{
+            if(jwtFilter.isAdmin()){
+                return new ResponseEntity<>(userRepository.listUsers(), HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(new ArrayList<>(),HttpStatus.UNAUTHORIZED);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return new ResponseEntity<>(new ArrayList<UserListDTO>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 
     @Override
