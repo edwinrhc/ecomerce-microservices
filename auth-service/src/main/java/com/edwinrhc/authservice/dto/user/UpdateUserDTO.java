@@ -35,5 +35,5 @@ public class UpdateUserDTO {
     @NotBlank(message = "El role no puede estar vacío")
     private String role;
 
-    private boolean enabled = true;
+    private String status;
 }

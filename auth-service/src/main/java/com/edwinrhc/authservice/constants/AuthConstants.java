@@ -4,6 +4,8 @@ public class AuthConstants {
 
     public static final String SOMETHING_WENT_WRONG = "Something Went Wrong";
     public static final String INVALID_DATA = "Invalid Data";
+    public static final String BAD_CREDENTIALS = "Bad Credentials";
+    public static final String WAIT_FOR_ADMIN_APPROVAL = "Waiting for Admin Approval";
     public static final String INVALID_TOKEN = "Invalid Token";
     public static final String EXPIRED_TOKEN = "Expired Token";
     public static final String INVALID_USER = "Invalid User";

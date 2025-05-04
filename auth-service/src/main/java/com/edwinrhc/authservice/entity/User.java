@@ -2,10 +2,14 @@ package com.edwinrhc.authservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Data
 @Getter
 @Setter
+@DynamicUpdate
+@DynamicInsert
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,7 +26,7 @@ public class User {
     private String email;
     private String password;
     private String role;
-    private boolean enabled = true;
+    private String status;
 
 
 

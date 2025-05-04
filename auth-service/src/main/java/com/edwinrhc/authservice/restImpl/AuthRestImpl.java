@@ -2,6 +2,7 @@ package com.edwinrhc.authservice.restImpl;
 
 import com.edwinrhc.authservice.constants.AuthConstants;
 import com.edwinrhc.authservice.dto.user.CreateUserDTO;
+import com.edwinrhc.authservice.dto.user.LoginDTO;
 import com.edwinrhc.authservice.rest.AuthRest;
 import com.edwinrhc.authservice.service.AuthService;
 import com.edwinrhc.authservice.utils.AuthUtils;
@@ -24,5 +25,15 @@ public class AuthRestImpl implements AuthRest {
            ex.printStackTrace();
        }
        return AuthUtils.getResponseEntity(AuthConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> login(LoginDTO loginDTO) {
+        try{
+            return authService.login(loginDTO);
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return AuthUtils.getResponseEntity(AuthConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
