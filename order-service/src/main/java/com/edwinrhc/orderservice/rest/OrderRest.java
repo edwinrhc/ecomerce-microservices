@@ -3,6 +3,7 @@ package com.edwinrhc.orderservice.rest;
 
 import com.edwinrhc.orderservice.dto.order.CreateOrderDTO;
 import com.edwinrhc.orderservice.dto.order.UpdateOrderDTO;
+import com.edwinrhc.orderservice.dto.product.ProductDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,4 +33,9 @@ public interface OrderRest {
 
     @DeleteMapping("/{id}")
     ResponseEntity<String> deleteOrderById(@PathVariable Long id);
+
+
+    @GetMapping("/product/{id}")
+    ResponseEntity<ProductDTO> obtenerProducto(@PathVariable Long id);
+
 }

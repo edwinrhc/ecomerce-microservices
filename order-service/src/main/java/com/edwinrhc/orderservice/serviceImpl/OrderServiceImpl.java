@@ -3,8 +3,10 @@ package com.edwinrhc.orderservice.serviceImpl;
 import com.edwinrhc.orderservice.constants.OrderConstants;
 import com.edwinrhc.orderservice.dto.order.CreateOrderDTO;
 import com.edwinrhc.orderservice.dto.order.UpdateOrderDTO;
+import com.edwinrhc.orderservice.dto.product.ProductDTO;
 import com.edwinrhc.orderservice.entity.Order;
 import com.edwinrhc.orderservice.exception.ResourceNotFoundException;
+import com.edwinrhc.orderservice.feign.ProductClient;
 import com.edwinrhc.orderservice.repository.OrderRepository;
 import com.edwinrhc.orderservice.service.OrderService;
 import com.edwinrhc.orderservice.utils.OrderUtils;
@@ -29,6 +31,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     ModelMapper modelMapper;
+
+
+    @Autowired
+    private ProductClient productClient;
 
 
     @Override
@@ -148,4 +154,11 @@ public class OrderServiceImpl implements OrderService {
                 .map( order -> modelMapper.map(order,CreateOrderDTO.class))
                 .collect(Collectors.toList());
     }
+
+
+    @Override
+    public ProductDTO obtenerProductoPorId(Long id) {
+        return productClient.getProductById(id).getBody();
+    }
+
 }

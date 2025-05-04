@@ -3,6 +3,7 @@ package com.edwinrhc.orderservice.restImpl;
 import com.edwinrhc.orderservice.constants.OrderConstants;
 import com.edwinrhc.orderservice.dto.order.CreateOrderDTO;
 import com.edwinrhc.orderservice.dto.order.UpdateOrderDTO;
+import com.edwinrhc.orderservice.dto.product.ProductDTO;
 import com.edwinrhc.orderservice.rest.OrderRest;
 import com.edwinrhc.orderservice.service.OrderService;
 import com.edwinrhc.orderservice.utils.OrderUtils;
@@ -77,5 +78,11 @@ public class OrderRestImpl implements OrderRest {
             e.printStackTrace();
         }
         return OrderUtils.getResponseEntity(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<ProductDTO> obtenerProducto(Long id) {
+        ProductDTO producto = orderService.obtenerProductoPorId(id);
+        return ResponseEntity.ok(producto);
     }
 }
