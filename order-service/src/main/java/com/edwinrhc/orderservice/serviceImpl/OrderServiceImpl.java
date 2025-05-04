@@ -17,9 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,8 +44,21 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("Create Order: {}", createOrderDTO);
         try{
+
+            ProductDTO product = productClient.getProductById(createOrderDTO.getProductId()).getBody();
+
+            if(product == null){
+                return OrderUtils.getResponseEntity("Producto no encontrado",HttpStatus.NOT_FOUND);
+            }
+
+            BigDecimal total = product.getPrice().multiply(BigDecimal.valueOf(createOrderDTO.getProductQuantity()));
+
             Order order = modelMapper.map(createOrderDTO, Order.class);
+            order.setOrderNumber(generarOrderNumber());
             order.setOrderDate(LocalDateTime.now());
+            order.setOrderStatus("PENDING");
+            order.setTotalAmount(total);
+
             Order savedOrder = orderRepository.save(order);
             CreateOrderDTO savedOrderDTO = modelMapper.map(savedOrder, CreateOrderDTO.class);
             return OrderUtils.getResponseEntity("Successfully Registered", HttpStatus.OK);
@@ -159,6 +174,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ProductDTO obtenerProductoPorId(Long id) {
         return productClient.getProductById(id).getBody();
+    }
+
+
+    private String generarOrderNumber(){
+        String lastOrder = orderRepository.findLastOrderNumber();
+        int nextNumber = 1;
+        if(lastOrder != null && lastOrder.startsWith("ORD-")){
+            String numberPart = lastOrder.substring(4);
+            try{
+                nextNumber = Integer.parseInt(numberPart) + 1;
+            }catch (NumberFormatException e){
+                nextNumber = 1;
+            }
+        }
+        return String.format("ORD-%03d", nextNumber);
     }
 
 }
