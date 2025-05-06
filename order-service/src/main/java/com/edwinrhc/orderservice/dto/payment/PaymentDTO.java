@@ -1,0 +1,37 @@
+package com.edwinrhc.orderservice.dto.payment;
+
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PaymentDTO {
+
+
+    @Column(nullable = false)
+    @NotNull(message = "El monto es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El monto debe ser mayor que cero")
+    private BigDecimal amount;
+
+    @NotBlank(message = "El paymentMethod no puede estar vacío")
+    @Column(nullable = false, length = 50)
+    private String paymentMethod; // tipo de pago
+
+    @NotBlank(message = "El paymentStatus no puede estar vacío")
+    @Column(nullable = false, length = 20)
+    private String paymentStatus;
+
+    @Column(nullable = false)
+    private LocalDateTime paymentDate;
+}
+
+
