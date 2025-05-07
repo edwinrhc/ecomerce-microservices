@@ -1,7 +1,10 @@
 package com.edwinrhc.orderservice.service;
 
+
+import com.edwinrhc.common.dto.ApiResponse;
 import com.edwinrhc.orderservice.dto.order.CreateOrderDTO;
 import com.edwinrhc.orderservice.dto.order.UpdateOrderDTO;
+import com.edwinrhc.orderservice.dto.payment.PaymentDTO;
 import com.edwinrhc.orderservice.dto.product.ProductDTO;
 import org.springframework.http.ResponseEntity;
 
@@ -22,5 +25,5 @@ public interface OrderService {
 
     ProductDTO obtenerProductoPorId(Long id);
 
-
+    ResponseEntity<ApiResponse> createPayment(PaymentDTO paymentDTO);
 }

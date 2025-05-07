@@ -1,11 +1,15 @@
 package com.edwinrhc.orderservice.serviceImpl;
 
 import com.edwinrhc.orderservice.constants.OrderConstants;
+import com.edwinrhc.common.dto.ApiResponse;
+
 import com.edwinrhc.orderservice.dto.order.CreateOrderDTO;
 import com.edwinrhc.orderservice.dto.order.UpdateOrderDTO;
+import com.edwinrhc.orderservice.dto.payment.PaymentDTO;
 import com.edwinrhc.orderservice.dto.product.ProductDTO;
 import com.edwinrhc.orderservice.entity.Order;
 import com.edwinrhc.orderservice.exception.ResourceNotFoundException;
+import com.edwinrhc.orderservice.feign.PaymentClient;
 import com.edwinrhc.orderservice.feign.ProductClient;
 import com.edwinrhc.orderservice.repository.OrderRepository;
 import com.edwinrhc.orderservice.service.OrderService;
@@ -21,7 +25,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProductClient productClient;
+    @Autowired
+    private PaymentClient paymentClient;
 
 
     @Override
@@ -174,6 +179,19 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ProductDTO obtenerProductoPorId(Long id) {
         return productClient.getProductById(id).getBody();
+    }
+
+    @Override
+    public ResponseEntity<ApiResponse> createPayment(PaymentDTO paymentDTO) {
+        try{
+            ResponseEntity<String> response = paymentClient.createPayment(paymentDTO);
+            ApiResponse apiResponse = new ApiResponse(OrderConstants.PAYMENT_GENERATION_SUCCESSFULLY, response.getBody());
+            return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+        }catch(Exception e){
+            log.error("Error al generar el pago", e);
+            ApiResponse error = new ApiResponse(OrderConstants.PAYMENT_GENERATION_ERROR, null);
+            return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
