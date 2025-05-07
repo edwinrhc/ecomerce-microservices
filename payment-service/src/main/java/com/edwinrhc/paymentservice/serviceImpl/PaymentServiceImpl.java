@@ -1,5 +1,6 @@
 package com.edwinrhc.paymentservice.serviceImpl;
 
+import com.edwinrhc.common.dto.ApiResponse;
 import com.edwinrhc.paymentservice.constants.PaymentConstants;
 import com.edwinrhc.paymentservice.dto.payment.CreatePaymentDTO;
 import com.edwinrhc.paymentservice.dto.payment.UpdatePaymentDTO;
@@ -32,18 +33,25 @@ public class PaymentServiceImpl implements PaymentService {
     ModelMapper modelMapper;
 
     @Override
-    public ResponseEntity<String> createPayment(CreatePaymentDTO createPaymentDTO) {
+    public ResponseEntity<ApiResponse> createPayment(CreatePaymentDTO createPaymentDTO) {
         try{
+            log.info("Iniciando creación de pago con DTO: {}", createPaymentDTO);
+
             Payment payment = modelMapper.map(createPaymentDTO, Payment.class);
             payment.setPaymentDate(LocalDateTime.now());
             Payment savedPayment = paymentRepository.save(payment);
             CreatePaymentDTO savePaymentDTO = modelMapper.map(savedPayment, CreatePaymentDTO.class);
-            return PaymentUtils.getResponseEntity(PaymentConstants.PAYMENT_SUCCESSFULLY_REGISTERED,HttpStatus.OK);
+            log.info("Pago guardado exitosamente: {}", savePaymentDTO);
+
+            return PaymentUtils.apiResponseEntity(PaymentConstants.PAYMENT_SUCCESSFULLY_REGISTERED,savePaymentDTO, HttpStatus.CREATED);
         }catch(Exception e){
-            log.error("Error  al crear el pago", e);
-            e.printStackTrace();
+            log.error("Error al crear el pago: ", e);
+            return PaymentUtils.apiResponseEntity(
+                    PaymentConstants.SOMETHING_WENT_WRONG,
+                    null,
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
-        return PaymentUtils.getResponseEntity(PaymentConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override

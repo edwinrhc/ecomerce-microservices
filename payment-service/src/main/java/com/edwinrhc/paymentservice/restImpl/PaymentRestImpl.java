@@ -1,5 +1,6 @@
 package com.edwinrhc.paymentservice.restImpl;
 
+import com.edwinrhc.common.dto.ApiResponse;
 import com.edwinrhc.paymentservice.constants.PaymentConstants;
 import com.edwinrhc.paymentservice.dto.payment.CreatePaymentDTO;
 import com.edwinrhc.paymentservice.dto.payment.UpdatePaymentDTO;
@@ -21,13 +22,13 @@ public class PaymentRestImpl implements PaymentRest {
     PaymentService paymentService;
 
     @Override
-    public ResponseEntity<String> createPayment(CreatePaymentDTO dto) {
+    public ResponseEntity<ApiResponse> createPayment(CreatePaymentDTO dto) {
         try{
             return paymentService.createPayment(dto);
         }catch (Exception e){
             e.printStackTrace();
         }
-        return PaymentUtils.getResponseEntity(PaymentConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return PaymentUtils.apiResponseEntity(PaymentConstants.SOMETHING_WENT_WRONG, dto,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override

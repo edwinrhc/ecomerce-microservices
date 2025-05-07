@@ -1,5 +1,6 @@
 package com.edwinrhc.paymentservice.utils;
 
+import com.edwinrhc.common.dto.ApiResponse;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,9 +22,16 @@ public class PaymentUtils {
 
     }
 
-    public static ResponseEntity<String> getResponseEntity(String responseMessage, HttpStatus status){
+   public static ResponseEntity<String> getResponseEntity(String responseMessage, HttpStatus status){
         return new ResponseEntity<>("{\"message\":\""+responseMessage+"\"}", status);
     }
+
+    public static ResponseEntity<ApiResponse> apiResponseEntity(String message, Object data, HttpStatus status) {
+        ApiResponse response = new ApiResponse(message, data);
+        return new ResponseEntity<>(response, status);
+    }
+
+
     public static String getUUID(){
         Date date = new Date();
         long time = date.getTime();
