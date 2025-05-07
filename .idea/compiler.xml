@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="config-server" />
         <module name="product-service" />
+        <module name="commonlib" />
         <module name="order-service" />
         <module name="payment-service" />
         <module name="service-registry" />

@@ -1,8 +1,10 @@
 package com.edwinrhc.orderservice.rest;
 
 
+import com.edwinrhc.common.dto.ApiResponse;
 import com.edwinrhc.orderservice.dto.order.CreateOrderDTO;
 import com.edwinrhc.orderservice.dto.order.UpdateOrderDTO;
+import com.edwinrhc.orderservice.dto.payment.PaymentDTO;
 import com.edwinrhc.orderservice.dto.product.ProductDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +39,8 @@ public interface OrderRest {
 
     @GetMapping("/product/{id}")
     ResponseEntity<ProductDTO> obtenerProducto(@PathVariable Long id);
+
+    @PostMapping("/payment/pay")
+    ResponseEntity<ApiResponse> createPayment(@RequestBody @Valid PaymentDTO dto);
 
 }

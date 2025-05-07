@@ -16,6 +16,9 @@ public class OrderConstants {
 
     public static final String ORDER_ALREADY_UPDATED = "Order Already Updated";
 
+    public static final String PAYMENT_GENERATION_ERROR = "Payment Generation Error";
+    public static final String PAYMENT_GENERATION_SUCCESSFULLY = "Payment Generation successfully";
+
     public static final String ORDER_CREATED_SUCCESSFULLY = "Order created successfully.";
 
 

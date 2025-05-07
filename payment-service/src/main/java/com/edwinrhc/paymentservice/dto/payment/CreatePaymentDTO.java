@@ -20,19 +20,16 @@ import java.time.LocalDateTime;
 public class CreatePaymentDTO {
 
 
-    @Column(nullable = false)
     @NotNull(message = "El monto es obligatorio")
     @DecimalMin(value = "0.0", inclusive = false, message = "El monto debe ser mayor que cero")
     private BigDecimal amount;
 
+
     @NotBlank(message = "El paymentMethod no puede estar vacío")
-    @Column(nullable = false, length = 50)
     private String paymentMethod; // tipo de pago
 
     @NotBlank(message = "El paymentStatus no puede estar vacío")
-    @Column(nullable = false, length = 20)
     private String paymentStatus;
 
-    @Column(nullable = false)
     private LocalDateTime paymentDate;
 }
