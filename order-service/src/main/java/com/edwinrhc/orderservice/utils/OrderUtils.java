@@ -1,5 +1,6 @@
 package com.edwinrhc.orderservice.utils;
 
+import com.edwinrhc.common.dto.ApiResponse;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,6 +25,10 @@ public class OrderUtils {
 
     public static ResponseEntity<String> getResponseEntity(String responseMessage, HttpStatus httpStatus){
         return new ResponseEntity<String>("{\"message\":\""+responseMessage+"\"}", httpStatus);
+    }
+
+    public static ResponseEntity<ApiResponse> getApiResponse(String message, HttpStatus status) {
+        return new ResponseEntity<>(new ApiResponse(message, null), status);
     }
 
     public static String getUUID(){
