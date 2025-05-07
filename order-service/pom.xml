@@ -133,6 +133,13 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.edwinrhc</groupId>
+            <artifactId>commonlib</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+
 
     </dependencies>
 
