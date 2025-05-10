@@ -31,6 +31,10 @@ public class OrderUtils {
         return new ResponseEntity<>(new ApiResponse(message, null), status);
     }
 
+    public static ResponseEntity<ApiResponse> ApiResponseEntity(String message,Object data, HttpStatus status) {
+        return new ResponseEntity<>(new ApiResponse(message, data), status);
+    }
+
     public static String getUUID(){
         Date date = new Date();
         long time = date.getTime();
