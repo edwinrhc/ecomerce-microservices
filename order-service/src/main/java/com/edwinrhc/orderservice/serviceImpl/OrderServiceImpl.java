@@ -99,21 +99,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<String> deleteOrder(Long orderId) {
-        try{
-
-            Order order = orderRepository.findById(orderId).
-                    orElseThrow(() -> new ResourceNotFoundException("Order","id",orderId));
-            orderRepository.delete(order);
-            return OrderUtils.getResponseEntity(OrderConstants.ORDER_ALREADY_DELETED,HttpStatus.OK);
-
-        }catch (ResourceNotFoundException e){
-            log.warn("Order not found: {}", e.getMessage());
-            return OrderUtils.getResponseEntity(OrderConstants.ORDER_NOT_FOUND, HttpStatus.NOT_FOUND);
-        }catch (Exception e){
-            log.error("Error al eliminar el order", e);
-            return OrderUtils.getResponseEntity(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<ApiResponse> deleteOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow( () -> new ResourceNotFoundException("Order","id",orderId));
+        orderRepository.delete(order);
+        return OrderUtils.getApiResponse(
+                OrderConstants.ORDER_ALREADY_DELETED,
+                HttpStatus.OK
+        );
     }
 
     @Override

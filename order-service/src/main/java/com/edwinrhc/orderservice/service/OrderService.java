@@ -14,7 +14,7 @@ public interface OrderService {
 
     ResponseEntity<String> createOrder(CreateOrderDTO createOrderDTO);
     ResponseEntity<String> updateOrder(UpdateOrderDTO updateOrderDTO);
-    ResponseEntity<String> deleteOrder(Long orderId);
+    ResponseEntity<ApiResponse> deleteOrder(Long orderId);
 
     ResponseEntity<CreateOrderDTO> getOrderById(Long orderId);
 

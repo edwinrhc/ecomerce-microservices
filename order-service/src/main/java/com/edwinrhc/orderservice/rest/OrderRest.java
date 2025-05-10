@@ -34,7 +34,7 @@ public interface OrderRest {
     ResponseEntity<CreateOrderDTO> getOrderById(@PathVariable Long id);
 
     @DeleteMapping("/{id}")
-    ResponseEntity<String> deleteOrderById(@PathVariable Long id);
+    ResponseEntity<ApiResponse> deleteOrderById(@PathVariable Long id);
 
 
     @GetMapping("/product/{id}")

@@ -73,13 +73,13 @@ public class OrderRestImpl implements OrderRest {
     }
 
     @Override
-    public ResponseEntity<String> deleteOrderById(Long id) {
+    public ResponseEntity<ApiResponse> deleteOrderById(Long id) {
         try{
             return  orderService.deleteOrder(id);
         }catch (Exception e){
             e.printStackTrace();
         }
-        return OrderUtils.getResponseEntity(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return OrderUtils.getApiResponse(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
