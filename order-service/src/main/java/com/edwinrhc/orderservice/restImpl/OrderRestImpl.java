@@ -25,13 +25,8 @@ public class OrderRestImpl implements OrderRest {
 
 
     @Override
-    public ResponseEntity<String> createOrder(CreateOrderDTO dto) {
-        try{
+    public ResponseEntity<ApiResponse> createOrder(CreateOrderDTO dto) {
             return orderService.createOrder(dto);
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
-        return OrderUtils.getResponseEntity(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
@@ -74,12 +69,7 @@ public class OrderRestImpl implements OrderRest {
 
     @Override
     public ResponseEntity<ApiResponse> deleteOrderById(Long id) {
-        try{
             return  orderService.deleteOrder(id);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        return OrderUtils.getApiResponse(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override

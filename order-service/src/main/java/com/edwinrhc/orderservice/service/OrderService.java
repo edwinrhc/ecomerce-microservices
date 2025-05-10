@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    ResponseEntity<String> createOrder(CreateOrderDTO createOrderDTO);
+    ResponseEntity<ApiResponse> createOrder(CreateOrderDTO createOrderDTO);
     ResponseEntity<String> updateOrder(UpdateOrderDTO updateOrderDTO);
     ResponseEntity<ApiResponse> deleteOrder(Long orderId);
 

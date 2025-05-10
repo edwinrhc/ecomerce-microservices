@@ -31,7 +31,7 @@ public class OrderUtils {
         return new ResponseEntity<>(new ApiResponse(message, null), status);
     }
 
-    public static ResponseEntity<ApiResponse> ApiResponseEntity(String message,Object data, HttpStatus status) {
+    public static ResponseEntity<ApiResponse> apiResponseEntity(String message,Object data, HttpStatus status) {
         return new ResponseEntity<>(new ApiResponse(message, data), status);
     }
 

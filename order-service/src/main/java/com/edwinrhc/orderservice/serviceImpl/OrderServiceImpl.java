@@ -4,6 +4,7 @@ import com.edwinrhc.orderservice.constants.OrderConstants;
 import com.edwinrhc.common.dto.ApiResponse;
 
 import com.edwinrhc.orderservice.dto.order.CreateOrderDTO;
+import com.edwinrhc.orderservice.dto.order.OrderResponseDTO;
 import com.edwinrhc.orderservice.dto.order.UpdateOrderDTO;
 import com.edwinrhc.orderservice.dto.payment.PaymentDTO;
 import com.edwinrhc.orderservice.dto.product.ProductDTO;
@@ -14,6 +15,7 @@ import com.edwinrhc.orderservice.feign.ProductClient;
 import com.edwinrhc.orderservice.repository.OrderRepository;
 import com.edwinrhc.orderservice.service.OrderService;
 import com.edwinrhc.orderservice.utils.OrderUtils;
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     private PaymentClient paymentClient;
 
 
+/*
     @Override
     public ResponseEntity<String> createOrder(CreateOrderDTO createOrderDTO) {
 
@@ -74,6 +77,58 @@ public class OrderServiceImpl implements OrderService {
         }
         return OrderUtils.getResponseEntity(OrderConstants.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+*/
+
+    @Override
+    public ResponseEntity<ApiResponse> createOrder(CreateOrderDTO createOrderDTO) {
+        log.info("Create Order: {}", createOrderDTO);
+
+        try {
+            // Obtener información del producto desde product-service
+            ProductDTO product = productClient.getProductById(createOrderDTO.getProductId()).getBody();
+
+            if (product == null) {
+                return OrderUtils.apiResponseEntity("Producto no encontrado", null, HttpStatus.NOT_FOUND);
+            }
+
+            // Calcular total
+            BigDecimal total = product.getPrice().multiply(BigDecimal.valueOf(createOrderDTO.getProductQuantity()));
+
+            // Crear y guardar la orden
+            Order order = modelMapper.map(createOrderDTO, Order.class);
+            order.setOrderNumber(generarOrderNumber());
+            order.setOrderDate(LocalDateTime.now());
+            order.setOrderStatus("PENDING");
+            order.setTotalAmount(total);
+
+            Order savedOrder = orderRepository.save(order);
+
+            // Preparar la respuesta usando OrderResponseDTO
+            OrderResponseDTO responseDTO = new OrderResponseDTO();
+            responseDTO.setId(savedOrder.getId());
+            responseDTO.setOrderNumber(savedOrder.getOrderNumber());
+            responseDTO.setOrderDate(savedOrder.getOrderDate());
+            responseDTO.setTotalAmount(savedOrder.getTotalAmount());
+            responseDTO.setOrderStatus(savedOrder.getOrderStatus());
+            responseDTO.setProductId(createOrderDTO.getProductId());
+            responseDTO.setProductQuantity(createOrderDTO.getProductQuantity());
+
+            return OrderUtils.apiResponseEntity(
+                    "Orden registrada exitosamente",
+                    responseDTO,
+                    HttpStatus.CREATED
+            );
+
+        } catch (FeignException.NotFound ex) {
+            log.warn("Producto no encontrado en product-service: {}", createOrderDTO.getProductId());
+            return OrderUtils.apiResponseEntity("Producto no encontrado", null, HttpStatus.NOT_FOUND);
+
+        } catch (Exception ex) {
+            log.error("Error al registrar orden: {}", ex.getMessage(), ex);
+            return OrderUtils.apiResponseEntity("Error al registrar la orden", null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @Override
     public ResponseEntity<String> updateOrder(UpdateOrderDTO updateOrderDTO) {
@@ -102,9 +157,12 @@ public class OrderServiceImpl implements OrderService {
     public ResponseEntity<ApiResponse> deleteOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow( () -> new ResourceNotFoundException("Order","id",orderId));
+        // Mapear antes de eliminar
+        CreateOrderDTO orderDTO = modelMapper.map(order, CreateOrderDTO.class);
         orderRepository.delete(order);
-        return OrderUtils.getApiResponse(
+        return OrderUtils.apiResponseEntity(
                 OrderConstants.ORDER_ALREADY_DELETED,
+                orderDTO,
                 HttpStatus.OK
         );
     }

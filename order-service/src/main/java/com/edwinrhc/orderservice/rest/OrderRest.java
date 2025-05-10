@@ -16,7 +16,7 @@ import java.util.List;
 public interface OrderRest {
 
     @PostMapping(value="/add")
-    ResponseEntity<String> createOrder(@RequestBody @Valid CreateOrderDTO dto);
+    ResponseEntity<ApiResponse> createOrder(@RequestBody @Valid CreateOrderDTO dto);
 
     @PutMapping(value="/update")
     ResponseEntity<String> updateOrder(@RequestBody @Valid UpdateOrderDTO dto);

@@ -36,6 +36,7 @@ public ResponseEntity<ApiResponse> handleValidationErrors(MethodArgumentNotValid
     );
 }
 
+/*
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException ex) {
         Map<String, String> error = new HashMap<>();
@@ -48,6 +49,24 @@ public ResponseEntity<ApiResponse> handleValidationErrors(MethodArgumentNotValid
         Map<String, String> error = new HashMap<>();
         error.put("error", "Error interno del servidor: " + ex.getMessage());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    */
+
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiResponse> handleResourceNotFound(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(
+                new ApiResponse("Recurso no encontrado", ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse> handleRuntime(RuntimeException ex) {
+        return new ResponseEntity<>(
+                new ApiResponse("Error interno del servidor", ex.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 
 }
