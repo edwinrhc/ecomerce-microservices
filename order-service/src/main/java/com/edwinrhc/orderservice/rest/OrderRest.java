@@ -6,6 +6,8 @@ import com.edwinrhc.orderservice.dto.order.CreateOrderDTO;
 import com.edwinrhc.orderservice.dto.order.UpdateOrderDTO;
 import com.edwinrhc.orderservice.dto.payment.PaymentDTO;
 import com.edwinrhc.orderservice.dto.product.ProductDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +17,15 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public interface OrderRest {
 
+    @Operation(summary = "Registro de ordenes", description = "Registra una nueva orden")
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Orden Creada")
+    })
+
     @PostMapping(value="/add")
     ResponseEntity<ApiResponse> createOrder(@RequestBody @Valid CreateOrderDTO dto);
+
+
 
     @PutMapping(value="/update")
     ResponseEntity<String> updateOrder(@RequestBody @Valid UpdateOrderDTO dto);
