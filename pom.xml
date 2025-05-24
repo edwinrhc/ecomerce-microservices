@@ -20,6 +20,9 @@
         <module>payment-service</module>
         <module>auth-service</module>
         <module>commonlib</module>
+
+
+
     </modules>
 
     <properties>
